@@ -14,7 +14,7 @@ There is a need for a lightweight system that can quickly compress, analyze, and
 
 ## 💡Solution Overview
 
-Financial Report Analyzer is a 1-day hackathon-style Python project that analyzes uploaded financial report PDFs and combines document parsing, NLP compression, and market data analytics into a single Streamlit dashboard.
+Financial Report Analyzer project that analyzes uploaded financial report PDFs and combines document parsing, NLP compression, and market data analytics into a single Streamlit dashboard.
 
 The application:
 
@@ -43,7 +43,6 @@ The system is designed to work without SEC APIs and instead relies on uploaded P
 - Trend detection using Yahoo Finance data
 - Peer company comparison
 - Rule-based alert generation
-- ROI and latency savings calculator
 - Interactive Streamlit dashboard
 
 ---
@@ -72,7 +71,6 @@ User PDF Upload
 - Peer Comparison
 - Alerts + ROI Metrics
 - Streamlit Dashboard
-
 
 ---
 
@@ -144,8 +142,6 @@ User PDF Upload
 - Performance may slow down for very large PDFs
 - No live filings API integration in current version
 - Not investment or financial advice
-- Built as a hackathon-level prototype, not production-grade
-
 
 ## 🔮Future Improvements
 
