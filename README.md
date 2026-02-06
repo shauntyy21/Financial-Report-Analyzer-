@@ -1,4 +1,4 @@
-# 📊Financial-Report-Analyzer
+# 📊Financial Report Analyzer
  
 **Fast, AI-powered analysis of financial reports using PDF parsing, NLP compression, and interactive dashboards.**
 
