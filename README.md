@@ -1,118 +1,195 @@
-# Fully Local PDF Question Answering System
+# Financial Report Analyzer 📊
 
-This application allows you to ask questions about your PDF documents and get relevant answers. It uses AI to understand your PDFs and provide accurate responses based on their content.
+A fully local, privacy-first **PDF Question Answering system** built for financial document analysis. Upload annual reports, earnings PDFs, or any financial document and ask detailed questions — all processing happens on your machine using Ollama.
+
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-UI-red?logo=streamlit)
+![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-black)
+![LangChain](https://img.shields.io/badge/LangChain-RAG-green)
+![FAISS](https://img.shields.io/badge/FAISS-Vector%20Store-orange)
+
+---
+
+## ✨ Features
+
+- 📤 **Upload PDFs** directly through the web UI
+- 🧠 **RAG Pipeline** — Retrieval-Augmented Generation for accurate, context-grounded answers
+- 💾 **Embedding Cache** — PDFs are embedded once and cached as FAISS indexes for fast re-queries
+- 🔒 **100% Local** — No data leaves your machine; no API keys required
+- 💬 **Detailed Answers** — Prompts are engineered for precise financial data extraction
+
+---
+
+## 🏗️ Architecture
+
+```
+User uploads PDF
+      │
+      ▼
+ PyPDF2 extracts text
+      │
+      ▼
+ RecursiveCharacterTextSplitter
+ chunks text (1000 chars, 50 overlap)
+      │
+      ▼
+ OllamaEmbeddings (nomic-embed-text)
+ converts chunks → vectors
+      │
+      ▼
+ FAISS Vector Store
+ saved to /embeddings/<md5hash>.faiss
+      │
+      ▼
+ similarity_search(query, k=2)
+ retrieves top relevant chunks
+      │
+      ▼
+ Ollama LLM (gemma3:1b)
+ generates detailed answer
+      │
+      ▼
+ Streamlit UI displays response
+```
+
+---
+
+## � Project Structure
+
+```
+Financial-Report-Analyzer/
+│
+├── app.py               # Streamlit web UI
+├── rag.py               # Core RAG pipeline (DocumentProcessor, RAGSystem)
+├── requirements.txt     # Python dependencies
+├── .gitignore
+│
+├── knowledge_base/      # ← Drop your PDFs here (git-ignored)
+└── embeddings/          # ← Auto-generated FAISS cache (git-ignored)
+```
+
+---
 
 ## 🚀 Quick Start
 
-Clone the repository:
-```bash
-git clone https://github.com/mshojaei77/ollama_rag.git
-cd ollama_rag
-```
+### Prerequisites
 
-The cloned repository includes a sample PDF and embedding cache about MCP for testing.
+1. **Python 3.8+**
+2. **[Ollama](https://ollama.ai/)** — install and make sure it's running
 
-## 📋 Prerequisites
-
-Before you start, you'll need to:
-1. Have Python installed on your computer (version 3.8 or higher)
-2. Have Ollama installed on your computer
-
-### Installing Ollama
-
-1. Visit [Ollama's website](https://ollama.ai/)
-2. Download and install Ollama for your operating system (Windows/Mac/Linux)
-
-## 🛠️ Setup & Installation
-
-### Step 1: Install Required Models
-
-Open your terminal/command prompt and run:
+### 1. Clone the repo
 
 ```bash
-ollama pull nomic-embed-text
-ollama pull gemma3:1b
+git clone https://github.com/shauntyy21/Financial-Report-Analyzer-.git
+cd Financial-Report-Analyzer-
 ```
 
-### Step 2: Install Python Requirements
+### 2. Create a virtual environment
 
-In your terminal/command prompt, run:
+```bash
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+# Mac/Linux
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 3: Prepare Your Documents
-- Place your PDF files in the `knowledge_base` folder
-- The repository includes a sample PDF about MCP for testing
+### 4. Pull the required Ollama models
 
-### Step 4: Run the Program
-
-1. Open `rag.py` in a text editor
-2. Modify this line near the bottom:
-   ```python
-   response = rag_system.query("What is the purpose of the MCP?")
-   ```
-3. Replace with your question
-4. Run the program:
-   ```bash
-   python rag.py
-   ```
-
-## 📝 Example Questions
-
-Try these questions with the sample MCP document:
-- "What is the purpose of the MCP?"
-- "What are the main components of MCP?"
-- "How does MCP handle process scheduling?"
-
-Or use your own questions for your PDFs:
-- "What are the main points of chapter 1?"
-- "Can you summarize the conclusion?"
-- "What does the document say about X?"
-
-## ⚙️ System Configuration
-
-The system uses these default settings (configurable in `RAGConfig`):
-- Embedding Model: nomic-embed-text
-- LLM Model: gemma3:1b
-- Chunk Size: 1000
-- Chunk Overlap: 50
-- Top K Results: 2
-- Batch Size: 10
-
-## 📁 Project Structure
-
-```
-ollama_rag/
-│
-├── knowledge_base/     (PDF documents)
-│   └── mcp.pdf        (Sample PDF)
-│
-├── embeddings/        (Cached embeddings)
-├── rag.py            (Main program)
-└── requirements.txt   (Required packages)
+```bash
+ollama pull nomic-embed-text   # embedding model
+ollama pull gemma3:1b          # LLM for answering
 ```
 
-## ⚠️ Important Notes
+### 5. Run the app
 
-- First-time queries may take longer due to PDF processing
-- PDFs must be text-based (not scanned images)
-- Answer quality depends on the chosen LLM
-- Keep questions clear and specific
+```bash
+streamlit run app.py
+```
 
-## 🔍 Troubleshooting
+Open [http://localhost:8501](http://localhost:8501) in your browser.
 
-If you encounter issues:
-1. Ensure Ollama is running
-2. Verify PDFs are in the `knowledge_base` folder
-3. Check all installation steps are complete
-4. Try restarting your computer if Ollama isn't responding
+---
+
+## 🖥️ Usage
+
+1. **Upload a PDF** using the sidebar file uploader (e.g. a quarterly earnings report)
+2. **Type your question** in the text area, e.g.:
+   - *"What is the Operating Cash Flow to PAT percentage?"*
+   - *"What was the sequential revenue growth over the last 4 quarters?"*
+   - *"Summarize the key financial highlights for Q3."*
+3. **Click "Get Answer"** — the system retrieves relevant passages and generates a detailed response
+
+---
+
+## ⚙️ Configuration
+
+All parameters are in the `RAGConfig` dataclass inside `rag.py`:
+
+| Parameter | Default | Description |
+|---|---|---|
+| `embedding_model` | `nomic-embed-text` | Ollama model used for embeddings |
+| `llm_model` | `gemma3:1b` | Ollama LLM used for answer generation |
+| `chunk_size` | `1000` | Characters per text chunk |
+| `chunk_overlap` | `50` | Overlap between adjacent chunks |
+| `top_k` | `2` | Number of chunks retrieved per query |
+| `batch_size` | `10` | Chunks processed per embedding batch |
+
+To use a more capable model (e.g. for better answers):
+
+```python
+llm_model: str = "llama3"   # or "mistral", "phi3", etc.
+```
+
+---
+
+## 📦 Dependencies
+
+| Package | Purpose |
+|---|---|
+| `streamlit` | Web UI |
+| `langchain` | RAG orchestration |
+| `langchain-community` | Ollama + FAISS integrations |
+| `langchain-text-splitters` | Document chunking |
+| `faiss-cpu` | Vector similarity search |
+| `PyPDF2` | PDF text extraction |
+| `ollama` | Local LLM inference |
+
+---
+
+## ⚠️ Notes
+
+- **First query on a new PDF** takes longer — it processes and embeds the document
+- Subsequent queries on the same PDF are fast (uses cached FAISS index)
+- PDFs must be **text-based** (scanned image PDFs won't work without OCR)
+- Embedding cache is stored in `embeddings/` — delete it to force re-processing
+
+---
+
+## � Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `Connection refused` on query | Make sure Ollama is running (`ollama serve`) |
+| `No PDF files found` | Upload a PDF via the sidebar first |
+| Slow first response | Normal — PDF is being embedded for the first time |
+| Poor answer quality | Try a larger model: `ollama pull llama3` and update `llm_model` in `rag.py` |
+
+---
 
 ## 🤝 Contributing
 
-Feel free to:
-- Open issues
-- Submit pull requests
-- Fork the repository
-- Star the project if you find it useful
+Pull requests are welcome! For major changes, open an issue first.
+
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m 'Add my feature'`)
+4. Push and open a PR
