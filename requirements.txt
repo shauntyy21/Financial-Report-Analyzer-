@@ -1,0 +1,7 @@
+langchain
+langchain-community
+langchain-text-splitters
+ollama
+faiss-cpu
+PyPDF2
+streamlit
